@@ -1,9 +1,9 @@
-<phpunit bootstrap="\Models\test-bootstrap.php" colors="true" strict="true" verbose="true">
+<phpunit bootstrap="models\test-bootstrap.php" colors="true" strict="true" verbose="true">
 	<testsuites>
 		<testsuite name="Go Fish Test Suite">
-			<directory>Tests</directory>
+			<directory>tests</directory>
 			<exclude>FilenameTest.php</exclude>
 		</testsuite>
-		<includePath>Models</includePath>
+		<includePath>models</includePath>
 	</testsuites>
 </phpunit>
