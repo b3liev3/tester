@@ -7,7 +7,9 @@ class PlayerTest extends PHPUnit_Framework_TestCase
     /**
      * @var Player
      */
-    protected $object;
+    protected $player;
+    
+    protected $hand;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -15,7 +17,8 @@ class PlayerTest extends PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->object = new Player;
+	$this->hand = $this->getMock('CardCollection');
+        $this->player = new Player('John Smith',$this->hand);
     }
 
     /**
@@ -30,7 +33,7 @@ class PlayerTest extends PHPUnit_Framework_TestCase
      * @covers Player::getName
      * @todo   Implement testGetName().
      */
-    public function testGetName()
+    function testGetName()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -38,15 +41,42 @@ class PlayerTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @covers Player::darwCard
-     * @todo   Implement testDarwCard().
-     */
-    public function testDrawCard()
+    function testDrawCard()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+	$deck = $this->getMock('CardCollection');
+	$deck->expects($this->once())
+		->method('moveTopCardTo')
+		->with($this->identicalTo($this->hand));
+	
+	$this->player->drawCard($deck);
+    }
+    
+    function testTakeCardFromPlayer()
+    {
+	$otherHand = $this->getMock('CardCollection');
+	//first argument CLASS
+	//Second argument METHOD
+	//Third argument array of PARMS
+	$otherPlayer = $this->getMock('Player', array(), array('Jane Smith', $otherHand));
+	$card = $this->getMock('Card', array(), array('A', 'Spades'));
+	
+	$otherPlayer->expects($this->once())
+		->method('getCard')
+		->with($this->equalTo(4))
+		->will($this->returnValue($card));
+	
+	$otherPlayer->expects($this->once())
+		->method('getHand')
+		->will($this->returnValue($otherHand));
+	
+	$this->hand->expects($this->once())
+		->method('addCard')
+		->with($this->identicalTo($card));
+	
+	$otherHand->expects($this->once())
+		->method('removeCard')
+		->with($this->identicalTo($card));
+
+	$this->assertTrue($this->player->takeCards($otherPlayer,4));
     }
 }

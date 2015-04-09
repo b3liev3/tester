@@ -1,31 +1,40 @@
 <?php
     class CardTest extends PHPUnit_Framework_TestCase
     {
+	private $card;
+	
+	function setUp()
+	{
+	    $this->card = new Card('4', 'spades');
+	}
+	
 	function testGetNumber()
 	{
-	    $card = new Card('4', 'spades');
-	    $actualNumber = $card->getNumber();
+	    $actualNumber = $this->card->getNumber();
 	    $this->assertEquals(4,$actualNumber, 'Number should be <4>');
 	}
 	
 	function testGetSuit()
 	{
-	    $card = new Card('4','spades');
-	    $actualSuit = $card->getSuit();
+	    $actualSuit = $this->card->getSuit();
 	    $this->assertEquals('spades',$actualSuit, 'Suit should be <spades>');
 	}
 	
-	function testIsInMatchingSet()
+	function matchingCardDataProvider()
 	{
-	    $card = new Card('4','spades');
-	    $matchingCard = new Card('4','spades');
-	    $this->assertTrue($card->isInMatchingSet($matchingCard),'<4 of Spades> should match <4 of Hearts>');
+	    return array(
+		'4 of Hearts' => array(new Card('4','hearts'),true, 'should match'),
+		'5 of Hearts' => array(new Card('5','hearts'),false, 'should not match'),
+		'4 of Clubs' => array(new Card('4','clubs'),false, 'should not match'),
+	    );
 	}
 	
-	function testIsNotMatchingSet()
+	/**
+	 * 
+	 * @dataProvider matchingCardDataProvider
+	 */
+	function testIsInMatchingSet(Card $matchingCard, $expected, $msg)
 	{
-	    $card = new Card('4','spades');
-	    $matchingCard = new Card('5','hearts');
-	    $this->assertFalse($card->isInMatchingSet($matchingCard),'<4 of Spades> should not match <5 of Hearts>');
+	    $this->assertEquals($expected, $this->card->isInMatchingSet($matchingCard), "<{$this->card->getNumber()} of {$this->card->getSuit()}> {$msg} <{$matchingCard->getNumber()} of {$matchingCard->getSuit()}>");
 	}
     }
